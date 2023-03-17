@@ -1,9 +1,10 @@
 #include <stdio.h>
 
 /**
- * main - prints all single digit numbers starting from 0
+ * main - Entry point
+ * Description: prints all digit 0-9 to the console
  *
- * return: always 0
+ * return: always 0 (Sucess)
  */
 int main(void)
 {
