@@ -2,9 +2,11 @@
 
 /**
  * main - Entry point
- * Description: prints all digit 0-9 to the console
  *
- * return: always 0 (Sucess)
+ * Description: This program prints the digits 0-9 to the console
+ * using the putchar function.
+ *
+ * Return: ALways 0 (success)
  */
 int main(void)
 {
