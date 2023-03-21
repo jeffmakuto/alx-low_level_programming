@@ -4,7 +4,7 @@
  * print_alphabet - prints the alphabet in lowercase, followed by a new line
  *
  * Description: This function prints the alphabet in lowercase to the console,
- * 	        starting with 'a' and ending with 'z' followed by a new line
+ * starting with 'a' and ending with 'z' followed by a new line
  *
  * Return: void
  */
