@@ -3,7 +3,8 @@
 /**
  * print_alphabet: Entry point
  *
- * Description: prints the alphabet in lowercase, followed by a new line
+ * Description: This function prints the alphabet in lowercase to the console,
+ * starting with 'a' and ending with 'z' followed by a new line
  *
  * Return: Always 0 (success)
  */
