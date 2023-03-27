@@ -1,32 +1,38 @@
 #include "main.h"
 
 /**
- * _atoi - converts a string to integer
- * @s: the reference string to be converted
- * Return: the integer value of the converted string
+ * _atoi - convert string to integer
+ * @s: the reference to string
+ * Return: the first continues integer in @s else 0
  */
 int _atoi(char *s)
 {
-	int sign = 1;
-	int num = 0;
-	int started = 0;
+	char sign = 1, c;
+	unsigned int i = 0, n = 0;
 
-	while (*s != '\0')
+	while (1)
 	{
-		if (*s == '-')
+		c = *(s + i++);
+		if (c == '\0')
+			break;
+
+		if (c == '-')
 		{
 			sign *= -1;
 		}
-		else if (*s >= '0' && *s <= '9')
+		else if (c >= '0' && c <= '9')
 		{
-			num = num * 10 + (*s - '0');
-			started = 1;
+			c -= '0';
+			n *= 10;
+			n += c;
 		}
-		else if (started)
+		else if (n > 0)
 		{
 			break;
 		}
-		s++;
 	}
-	return (num * sign);
+
+	n *= sign;
+	return (n);
 }
+
