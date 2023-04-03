@@ -23,7 +23,6 @@ void rev_string(char *s)
 
 	mid = len / 2;
 
-	/* fadi */
 
 	/* reverse string */
 	for (i = 0; i < mid; i++)
