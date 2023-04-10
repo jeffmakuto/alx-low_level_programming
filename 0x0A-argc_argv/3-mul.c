@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 /**
- * main - prints the name of the program
+ * main - multiples two numbers
  *
  * @argc: the number of arguments passed to the program
  *
