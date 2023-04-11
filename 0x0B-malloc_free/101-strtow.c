@@ -1,138 +1,78 @@
+#include "main.h"
 #include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 
 /**
- * count_words - counts the number of words in a string
- * @str: string to count words in
+ * wrdcnt - counts the number of words in a string
+ * @s: string to count
  *
- * Return: number of words in str
+ * Return: int of number of words
  */
-static int count_words(char *str)
+
+int wrdcnt(char *s)
 {
-	int count = 0;
-	char *p = str;
+	int i, n = 0;
 
-	while (*p != '\0')
+	for (i = 0; s[i]; i++)
 	{
-		while (isspace(*p))
-			++p;
-
-		if (*p != '\0')
+		if (s[i] == ' ')
 		{
-			++count;
-			while (*p != '\0' && !isspace(*p))
-				++p;
+			if (s[i + 1] != ' ' && s[i + 1] != '\0')
+				n++;
 		}
+		else if (i == 0)
+			n++;
 	}
-
-	return (count);
-}
-
-/**
- * copy_word - copies a word from str into a new string
- * @str: string to copy word from
- * @len: length of word to copy
- *
- * Return: pointer to new string containing word, or NULL on failure
- */
-static char *copy_word(char *str, int len)
-{
-	char *word;
-
-	word = (char *) malloc(len + 1);
-
-	if (word == NULL)
-		return (NULL);
-
-	strncpy(word, str, len);
-	word[len] = '\0';
-
-	return (word);
-}
-
-/**
- * free_words - frees memory used by array of words
- * @words: array of words to free
- */
-static void free_words(char **words)
-{
-	int i = 0;
-
-	while (words[i] != NULL)
-	{
-		free(words[i]);
-		++i;
-	}
-
-	free(words);
-}
-
-/**
- * split_words - splits a string into an array of words
- * @str: string to split
- * @num_words: number of words in str
- *
- * Return: pointer to an array of strings (words) or NULL if str is NULL,
- * str is empty or if memory allocation fails
- */
-static char **split_words(char *str, int num_words)
-{
-	int i, len;
-	char **words, *p, *start, *word;
-
-	words = (char **) malloc(sizeof(char *) * (num_words + 1));
-
-	if (words == NULL)
-		return (NULL);
-
-	p = str;
-	i = 0;
-
-	while (*p != '\0')
-	{
-		while (isspace(*p))
-			++p;
-
-		if (*p != '\0')
-		{
-
-			start = p;
-
-			while (*p != '\0' && !isspace(*p))
-				++p;
-
-			len = p - start;
-			word = copy_word(start, len);
-
-			if (word == NULL)
-			{
-				free_words(words);
-				return (NULL);
-			}
-
-			words[i++] = word;
-		}
-	}
-	words[i] = NULL;
-	return (words);
+	n++;
+	return (n);
 }
 
 /**
  * strtow - splits a string into words
  * @str: string to split
  *
- * Return: pointer to an array of strings (words) or NULL if str is NULL,
- * str is empty or if memory allocation fails
+ * Return: pointer to an array of strings
  */
+
 char **strtow(char *str)
 {
-	int num_words;
-	char **words;
+	int i, j, k, l, n = 0, wc = 0;
+	char **w;
 
-	num_words = count_words(str);
-	words = split_words(str, num_words);
-
-	return (words);
+	if (str == NULL || *str == '\0')
+		return (NULL);
+	n = wrdcnt(str);
+	if (n == 1)
+		return (NULL);
+	w = (char **)malloc(n * sizeof(char *));
+	if (w == NULL)
+		return (NULL);
+	w[n - 1] = NULL;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] != ' ' && (i == 0 || str[i - 1] == ' '))
+		{
+			for (j = 1; str[i + j] != ' ' && str[i + j]; j++)
+				;
+			j++;
+			w[wc] = (char *)malloc(j * sizeof(char));
+			j--;
+			if (w[wc] == NULL)
+			{
+				for (k = 0; k < wc; k++)
+					free(w[k]);
+				free(w[n - 1]);
+				free(w);
+				return (NULL);
+			}
+			for (l = 0; l < j; l++)
+				w[wc][l] = str[i + l];
+			w[wc][l] = '\0';
+			wc++;
+			i += j;
+		}
+		else
+			i++;
+	}
+	return (w);
 }
-
