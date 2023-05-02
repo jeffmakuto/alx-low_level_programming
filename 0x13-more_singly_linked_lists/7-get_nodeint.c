@@ -3,7 +3,7 @@
 /**
  * get_nodeint_at_index - Returns the nth node of a linked list.
  
- * @head: a pointer to the 1st node of the list.
+ * @head: pointer to the 1st node of the list.
  
  * @index: the index of the node to return, starting at 0.
  *
