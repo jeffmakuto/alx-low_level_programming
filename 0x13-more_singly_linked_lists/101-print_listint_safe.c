@@ -15,7 +15,7 @@ size_t print_listint_safe(const listint_t *head)
 	if (!head)
 		return (0);
 
-	pointers = malloc(size * sizeof(void *));
+	pointers = calloc(size, sizeof(void *));
 	if (!pointers)
 		exit(98);
 
