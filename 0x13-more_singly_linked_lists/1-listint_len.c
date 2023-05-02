@@ -1,11 +1,11 @@
 #include "lists.h"
 
 /**
- * listint_len - Returns number of elements in a linked list.
+ * listint_len - Returns the number of elements in a linked listint_t list
+ 
+ * @h: Pointer to the 1st node of the linked list
  *
- * @h: pointer to the head of the 1st node in a lined list
- *
- * Retun: no. of elements in a linked list
+ * Return: The number of elements in the list
  */
 size_t listint_len(const listint_t *h)
 {
@@ -13,10 +13,9 @@ size_t listint_len(const listint_t *h)
 
 	while (h)
 	{
-		h = h->next;
 		count++;
+		h = h->next;
 	}
 
 	return (count);
-
 }
