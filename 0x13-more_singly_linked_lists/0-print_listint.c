@@ -2,7 +2,7 @@
 
 /**
  * print_listint - prints all the elements of a listint_t list.
- 
+ *
  * @h: pointer to the 1st node of the linked list.
  *
  * Return: The number of nodes.
