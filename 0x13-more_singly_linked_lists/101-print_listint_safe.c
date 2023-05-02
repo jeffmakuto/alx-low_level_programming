@@ -9,30 +9,43 @@
  */
 size_t print_listint_safe(const listint_t *head)
 {
-	size_t count = 0;
-	const listint_t *current_node = head;
-	const listint_t *prev_nodes[1024];
-	size_t i, j;
+	size_t i, counter = 0, size = 5;
+	void **pointers;
 
-	while (current_node != NULL)
+	if (!head)
+		return (0);
+
+	/* init pointers list */
+	pointers = calloc(size, sizeof(void *));
+	if (!pointers)
+		exit(98);
+
+	while (head)
 	{
-		printf("[%p] %d\n", (void *)current_node, current_node->n);
-		count++;
+		/* check if current node is not printed before */
+		for (i = 0; i < counter; i++)
+			if (pointers[i] == (void *)head)
+				goto loop_detected;
 
-		if (count == 1024)
-			exit(98);
+		printf("[%p] %d\n", (void *)head, head->n);
 
-		prev_nodes[count - 1] = current_node;
-		current_node = current_node->next;
+		/* push the current node pointer to the pointers list */
+		pointers[counter++] = (void *)head;
+		head = head->next;
 
-		for (i = 0; i < count - 1; i++)
-			if (prev_nodes[i] == current_node)
-			{
-				for (j = 0; j <= i; j++)
-					printf("-> [%p] %d\n", (void *)prev_nodes[j], prev_nodes[j]->n);
+		/* if pointers list is full then reallocate larger memory */
+		if (counter >= size)
+		{
+			size += 5;
+			pointers = realloc(pointers, size * sizeof(void *));
+			if (!pointers)
 				exit(98);
-			}
+		}
 	}
-
-	return (count);
+	goto complete;
+loop_detected:
+	printf("-> [%p] %d\n", (void *)head, head->n);
+complete:
+	free(pointers);
+	return (counter);
 }
