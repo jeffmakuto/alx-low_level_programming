@@ -7,11 +7,18 @@
  *
  * Return: The number of elements in the list
  */
-size_t listint_len(const listint_t *h)
+size_t print_listint(const listint_t *h)
 {
-	int counter;
+	size_t count = 0;
+	const listint_t *current = h;
 
-	for (counter = 0; h; h = h->next, counter++)
-		;
-	return (counter);
+	while (current != NULL)
+	{
+		printf("%d\n", current->n);
+		count++;
+		current = current->next;
+	}
+
+	return count;
 }
+
