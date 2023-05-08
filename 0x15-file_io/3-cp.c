@@ -1,66 +1,103 @@
 #include "main.h"
 
 /**
- * print_error_and_exit - prints the usage message and exits with code 97
+ * close_all - closes all opened file streams with error handling
  *
- * @exit_code: pointer to the exit code
- *
- * @error_message: pointer to the error message
- *
+ * @count: the number of passed file descriptors
  */
-void print_error_and_exit(int exit_code, const char *error_message)
+void close_all(int count, ...)
 {
-	dprintf(STDERR_FILENO, "%s\n", error_message);
-	exit(exit_code);
+	va_list ap;
+
+	va_start(ap, count);
+	for (; count > 0; count--)
+	{
+		int fd = va_arg(ap, int);
+
+		if (close(fd))
+		{
+			dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
+			exit(CLOSE_FAIL_STATUS);
+		}
+	}
+	va_end(ap);
 }
 
 /**
- * main - entry point
+ * copy_content - copies content from @fd_src to @fd_dest file descriptors
  *
- * @argc: numberof arguments passed
+ * @fd_dest: the file descriptor of the destination file
  *
- * @argv: an array of the arguments passed
+ * @fd_src: the file descriptor of the source file
  *
- * Return: 0 on Success
+ * @file_dest: the destination file name
+ *
+ * @file_src: the source file name
+ */
+void copy_content(int fd_dest, int fd_src, char *file_src, char *file_dest)
+{
+	char buffer[BUFFER_SIZE];
+	int bytesRead;
+
+	do {
+		memset(buffer, 0, BUFFER_SIZE);
+		bytesRead = read(fd_src, buffer, BUFFER_SIZE);
+		if (bytesRead < 0)
+		{
+			dprintf(STDERR_FILENO, "Can't read from file %s\n", file_src);
+			exit(READ_FAIL_STATUS);
+		}
+		if (fd_dest < 0 || write(fd_dest, buffer, bytesRead) < 0)
+		{
+			close_all(1, fd_src);
+			dprintf(STDERR_FILENO, "Can't write to %s\n", file_dest);
+			exit(WRITE_FAIL_STATUS);
+		}
+	} while (bytesRead > 0);
+}
+
+/**
+ * main - a program to copy content of file to another one
+ *
+ * @argc: number of arguments
+ *
+ * @argv: passed arguments as cstring array
+ *
+ * Description:
+ * arguments must to be <file_from> <file_to>
+ *
+ * Return: status code 0 on success,
+ * returns 97 on invalid args,
+ * if can not read from <file_from> returns 98
  */
 int main(int argc, char **argv)
 {
+	char *file_from, *file_to;
 	int fd_from, fd_to;
-	ssize_t bytes_read, bytes_written;
-	char buffer[BUFFER_SIZE];
-	mode_t mode = O_WRONLY | O_CREAT | O_TRUNC;
-	mode_t permissions = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
 
+	/* check args */
 	if (argc != 3)
-		print_error_and_exit(97, "Usage: cp file_from file_to");
-
-	fd_from = open(argv[1], O_RDONLY);
-
-	if (fd_from == -1)
 	{
-		char error_message[256];
-
-		sprintf(error_message, "Error: Can't read from file %s", argv[1]);
-		print_error_and_exit(98, error_message);
+		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
+		exit(USAGE_STATUS);
 	}
-	fd_to = open(argv[2], mode, permissions);
+	file_from = argv[1];
+	file_to = argv[2];
 
-	if (fd_to == -1)
+	/* open src file */
+	fd_from = open(file_from, O_RDONLY);
+	if (fd_from < 0)
 	{
-		char error_message[256];
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file_from);
+		exit(READ_FAIL_STATUS);
+	}
 
-		sprintf(error_message, "Error: Can't write to %s", argv[2]);
-		print_error_and_exit(99, error_message);
-	}
-	while ((bytes_read = read(fd_from, buffer, BUFFER_SIZE)) > 0)
-	{
-		bytes_written = write(fd_to, buffer, bytes_read);
-		if (bytes_written != bytes_read)
-			print_error_and_exit(99, "Error: Incomplete write operation");
-	}
-	if (bytes_read == -1)
-		print_error_and_exit(98, "Error: Failed to read from file");
-	if (close(fd_from) == -1 || close(fd_to) == -1)
-		print_error_and_exit(100, "Error: Can't close file descriptor");
+	/* open dest file */
+	fd_to = open(file_to, O_WRONLY | O_CREAT | O_TRUNC, WFILE_MODE);
+	/* copy content */
+	copy_content(fd_to, fd_from, file_from, file_to);
+
+	/* close and clean */
+	close_all(2, fd_to, fd_from);
 	return (0);
 }
