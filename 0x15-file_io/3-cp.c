@@ -64,4 +64,3 @@ int main(int argc, char **argv)
 		print_error_and_exit(100, "Error: Can't close file descriptor");
 	return (0);
 }
-
