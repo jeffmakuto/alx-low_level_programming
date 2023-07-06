@@ -12,7 +12,7 @@ void print_binary(unsigned long int n)
 	unsigned long int mask;
 	int flag;
 
-	if (!n)
+	if (n == 0)
 	{
 		putChar('0');
 		return;
