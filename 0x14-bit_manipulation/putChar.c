@@ -5,11 +5,12 @@
  *
  * @c: The character to be written
  *
- * Return: On success, it returns the written character as an unsigned char cast to an int.
- *         On failure, it returns EOF (usually -1).
+ * Return: On success, it returns the written character as
+ * an unsigned char cast to an int.
+ * On failure, it returns EOF (usually -1).
  */
 int putChar(int c)
 {
-	return write(1, &c, 1);
+	return (write(1, &c, 1));
 }
 
