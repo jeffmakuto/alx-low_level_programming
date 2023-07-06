@@ -1,11 +1,14 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#define PASSWORD_LENGTH 8
+
 /* Header Files */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 
 /* prototype functions */
 unsigned int binary_to_uint(const char *b);
@@ -16,5 +19,6 @@ int clear_bit(unsigned long int *n, unsigned int index);
 unsigned int flip_bits(unsigned long int n, unsigned long int m);
 int get_endianness(void);
 int _putchar(int c);
+void generatePassword(char *password);
 
 #endif /* MAIN_H */
