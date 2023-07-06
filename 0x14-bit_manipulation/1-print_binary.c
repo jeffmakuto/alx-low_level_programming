@@ -14,7 +14,7 @@ void print_binary(unsigned long int n)
 
 	if (n == 0)
 	{
-		putChar('0');
+		_putchar('0');
 		return;
 	}
 
@@ -25,11 +25,11 @@ void print_binary(unsigned long int n)
 	{
 		if ((n & mask))
 		{
-			putChar('1');
+			_putchar('1');
 			flag = 1;
 		}
 		else if (flag == 1)
-			putChar('0');
+			_putchar('0');
 		mask >>= 1;
 	}
 }

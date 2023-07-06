@@ -1,7 +1,7 @@
 #include "main.h"
 
 /**
- * putChar - Writes a character to the standard output
+ * _putchar - Writes a character to the standard output
  *
  * @c: The character to be written
  *
@@ -9,7 +9,7 @@
  * an unsigned char cast to an int.
  * On failure, it returns EOF (usually -1).
  */
-int putChar(int c)
+int _putchar(int c)
 {
 	return (write(1, &c, 1));
 }
