@@ -1,34 +1,27 @@
 #include "main.h"
 
 /**
- * print_binary - prints the binary representation of a number
+ * print_binary - print number in base 2
  *
- * @n: decimal number to convert to binary
+ * @n: the number to print
  *
  * Return: Void
  */
 void print_binary(unsigned long int n)
 {
-	unsigned long int mask;
-	int flag = 0;
+	unsigned int bits;
+	char first = 1;
 
-	if (n == 0)
+	for (bits = sizeof(n) * 8; bits > 0; bits--)
 	{
-		_putchar('0');
-		return;
-	}
+		char bit = (n >> (bits - 1)) & 0x01;
 
-	mask = 1UL << (sizeof(unsigned long int) * 8 - 1);
-
-	while (mask > 0)
-	{
-		if ((n & mask))
+		if (bit || (!bit && !first) || !n)
 		{
-			_putchar('1');
-			flag = 1;
+			first = 0;
+			_putchar(bit + '0');
 		}
-		else if (flag == 1 || mask == 1)
-			_putchar('0');
-		mask >>= 1;
+		if (!n)
+			break;
 	}
 }
