@@ -21,8 +21,8 @@ void print_binary(unsigned long int n)
 
 	while (n > 0)
 	{
-		binary[i] = n % 2; /* Store the remainder (0 or 1) in the binary array */
-		n = n / 2; /* Update n by dividing it by 2 */
+		binary[i] = n & 1; /* Store the least significant (0 or 1) in the binary array */
+		n = n >> 1;
 		i++;
 	}
 
