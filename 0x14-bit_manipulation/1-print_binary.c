@@ -9,23 +9,22 @@
  */
 void print_binary(unsigned long int n)
 {
-	int i, j, binary[32];
+	unsigned long int mask;
 
-	if (n == 0)
+	if (!n)
 	{
 		putChar('0');
 		return;
 	}
 
-	i = 0;
+	mask = 1UL << (sizeof(unsigned long int) * 8 - 1);
 
-	while (n > 0)
+	while (mask > 0)
 	{
-		binary[i] = n & 1; /* Store the least significant (0 or 1) in the binary array */
-		n = n >> 1;
-		i++;
+		if ((n & mask))
+			putChar('1');
+		else
+			putChar('0');
+		mask >>= 1;
 	}
-
-	for (j = i - 1; j >= 0; j--)
-		putChar(binary[j] + '0'); /* Print the binary in reverse order */
 }
