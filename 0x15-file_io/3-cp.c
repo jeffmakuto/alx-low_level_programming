@@ -1,107 +1,98 @@
 #include "main.h"
 
 /**
- * close_all - closes all opened file streams with error handling
+ * create_buffer - Allocates 1024 bytes for a buffer.
+ * @file: The name of the file buffer is storing chars for.
  *
- * @count: the number of passed file descriptors
- *
- * Return: Void
+ * Return: A pointer to the newly-allocated buffer.
  */
-void close_all(int count, ...)
+char *create_buffer(char *file)
 {
-	va_list ap;
+	char *buffer;
 
-	va_start(ap, count);
-	for (; count > 0; count--)
+	buffer = malloc(sizeof(char) * 1024);
+
+	if (buffer == NULL)
 	{
-		int fd = va_arg(ap, int);
-
-		if (close(fd))
-		{
-			dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
-			exit(CLOSE_FAIL_STATUS);
-		}
+		dprintf(STDERR_FILENO,
+			"Error: Can't write to %s\n", file);
+		exit(99);
 	}
-	va_end(ap);
+
+	return (buffer);
 }
 
 /**
- * copy_content - copies content from @fd_src to @fd_dest file descriptors
- *
- * @fd_dest: the file descriptor of the destination file
- *
- * @fd_src: the file descriptor of the source file
- *
- * @file_dest: the destination file name
- *
- * @file_src: the source file name
- *
- * Return: Void
+ * close_file - Closes file descriptors.
+ * @fd: The file descriptor to be closed.
  */
-void copy_content(int fd_dest, int fd_src, char *file_src, char *file_dest)
+void close_file(int fd)
 {
-	char buffer[BUFFER_SIZE];
-	int bytesRead;
+	int c;
 
-	do {
-		memset(buffer, 0, BUFFER_SIZE);
-		bytesRead = read(fd_src, buffer, BUFFER_SIZE);
-		if (bytesRead < 0)
-		{
-			dprintf(STDERR_FILENO, "Can't read from file %s\n", file_src);
-			exit(READ_FAIL_STATUS);
-		}
-		if (fd_dest < 0 || write(fd_dest, buffer, bytesRead) < 0)
-		{
-			close_all(1, fd_src);
-			dprintf(STDERR_FILENO, "Can't write to %s\n", file_dest);
-			exit(WRITE_FAIL_STATUS);
-		}
-	} while (bytesRead > 0);
+	c = close(fd);
+
+	if (c == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
+		exit(100);
+	}
 }
 
 /**
- * main - a program to copy content of file to another one
+ * main - Copies the contents of a file to another file.
+ * @argc: The number of arguments supplied to the program.
+ * @argv: An array of pointers to the arguments.
  *
- * @argc: number of arguments
+ * Return: 0 on success.
  *
- * @argv: passed arguments as cstring array
- *
- * Description:
- * arguments must to be <file_from> <file_to>
- *
- * Return: status code 0 on success,
- * returns 97 on invalid args,
- * if can not read from <file_from> returns 98
+ * Description: If the argument count is incorrect - exit code 97.
+ *              If file_from does not exist or cannot be read - exit code 98.
+ *              If file_to cannot be created or written to - exit code 99.
+ *              If file_to or file_from cannot be closed - exit code 100.
  */
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-	char *file_from, *file_to;
-	int fd_from, fd_to;
+	int from, to, r, w;
+	char *buffer;
 
-	/* check args */
 	if (argc != 3)
 	{
 		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
-		exit(USAGE_STATUS);
-	}
-	file_from = argv[1];
-	file_to = argv[2];
-
-	/* open src file */
-	fd_from = open(file_from, O_RDONLY);
-	if (fd_from < 0)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file_from);
-		exit(READ_FAIL_STATUS);
+		exit(97);
 	}
 
-	/* open dest file */
-	fd_to = open(file_to, O_WRONLY | O_CREAT | O_TRUNC, WFILE_MODE);
-	/* copy content */
-	copy_content(fd_to, fd_from, file_from, file_to);
+	buffer = create_buffer(argv[2]);
+	from = open(argv[1], O_RDONLY);
+	r = read(from, buffer, 1024);
+	to = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
 
-	/* close and clean */
-	close_all(2, fd_to, fd_from);
+	do {
+		if (from == -1 || r == -1)
+		{
+			dprintf(STDERR_FILENO,
+				"Error: Can't read from file %s\n", argv[1]);
+			free(buffer);
+			exit(98);
+		}
+
+		w = write(to, buffer, r);
+		if (to == -1 || w == -1)
+		{
+			dprintf(STDERR_FILENO,
+				"Error: Can't write to %s\n", argv[2]);
+			free(buffer);
+			exit(99);
+		}
+
+		r = read(from, buffer, 1024);
+		to = open(argv[2], O_WRONLY | O_APPEND);
+
+	} while (r > 0);
+
+	free(buffer);
+	close_file(from);
+	close_file(to);
+
 	return (0);
 }
