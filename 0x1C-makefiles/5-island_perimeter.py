@@ -6,7 +6,7 @@ def island_perimeter(grid):
     """
     Returns perimeter of a island
     Arg: grid - Provided island grid
-    returns Perimeter of islandy
+    returns Perimeter of island
     """
     width = len(grid[0])
     height = len(grid)
