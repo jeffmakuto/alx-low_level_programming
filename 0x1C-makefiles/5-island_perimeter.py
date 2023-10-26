@@ -4,7 +4,7 @@
 
 def island_perimeter(grid):
     """
-    Returns perimeter of a islang
+    Returns perimeter of a island
     Arg: grid - Provided island grid
     returns Perimeter of islandy
     """
